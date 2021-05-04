@@ -41,6 +41,7 @@ public class WeatherServiceImpl {
 
             if(jsonObject.getInt("cod") != 404) {
                 Weather weather = new Weather();
+                weather.setInputCity(nameCity);
                 weather.setCity(jsonObject.getString("name"));
                 weather.setMinTemp(jsonObject.getJSONObject("main").getFloat("temp_min"));
                 weather.setMaxTemp(jsonObject.getJSONObject("main").getFloat("temp_max"));

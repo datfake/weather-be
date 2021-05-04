@@ -12,6 +12,7 @@ public class Weather {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
+    String inputCity;
     String city;
     LocalDateTime date;
     Float minTemp;
