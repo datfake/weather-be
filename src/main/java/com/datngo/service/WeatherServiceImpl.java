@@ -39,20 +39,24 @@ public class WeatherServiceImpl {
             String body = response.body().string();
             JSONObject jsonObject = new JSONObject(body);
 
-            Weather weather = new Weather();
-            weather.setCity(jsonObject.getString("name"));
-            weather.setMinTemp(jsonObject.getJSONObject("main").getFloat("temp_min"));
-            weather.setMaxTemp(jsonObject.getJSONObject("main").getFloat("temp_max"));
-            JSONArray jsonWeatherArray = jsonObject.getJSONArray("weather");
-            weather.setIcon(((JSONObject)jsonWeatherArray.get(0)).optString("icon"));
-            weather.setMain(((JSONObject)jsonWeatherArray.get(0)).optString("main"));
-            weather.setDate(convertUTCTimeToLocalTime(jsonObject.getInt("dt")));
-            weather.setCreateOn(LocalDateTime.now());
-            weather.setUpdateOn(LocalDateTime.now());
+            if(jsonObject.getInt("cod") != 404) {
+                Weather weather = new Weather();
+                weather.setCity(jsonObject.getString("name"));
+                weather.setMinTemp(jsonObject.getJSONObject("main").getFloat("temp_min"));
+                weather.setMaxTemp(jsonObject.getJSONObject("main").getFloat("temp_max"));
+                JSONArray jsonWeatherArray = jsonObject.getJSONArray("weather");
+                weather.setIcon(((JSONObject)jsonWeatherArray.get(0)).optString("icon"));
+                weather.setMain(((JSONObject)jsonWeatherArray.get(0)).optString("main"));
+                weather.setDate(convertUTCTimeToLocalTime(jsonObject.getInt("dt")));
+                weather.setCreateOn(LocalDateTime.now());
+                weather.setUpdateOn(LocalDateTime.now());
 
-            Weather weatherNew = weatherRepository.save(weather);
-            log.debug("response -----> {}", jsonObject);
-            return weatherNew;
+                Weather weatherNew = weatherRepository.save(weather);
+                log.debug("response -----> {}", jsonObject);
+                return weatherNew;
+            } else {
+                return null;
+            }
         } catch (Exception e) {
             log.debug(e.getMessage());
             return null;

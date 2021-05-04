@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -20,20 +21,37 @@ public class WeatherController {
     private WeatherServiceImpl weatherService;
 
     @GetMapping
-    public Iterable<Weather> get(){
-        return  weatherRepository.findAll(Sort.by(Sort.Direction.ASC, "id"));
+    public Map<String, Object> get(){
+        Map<String, Object> result = new HashMap<String, Object>();
+        try {
+            result.put("code", 200);
+            result.put("message", "get success");
+            result.put("data", weatherRepository.findAll(Sort.by(Sort.Direction.ASC, "id")));
+        }
+        catch (Exception e) {
+            result.put("code", 500);
+            result.put("message", "get fail");
+        }
+        return result;
     }
 
     @PostMapping
-    public Weather saveWeatherByCityName(@RequestBody Map<String, Object> data){
+    public Map<String, Object> saveWeatherByCityName(@RequestBody Map<String, Object> data){
+        Map<String, Object> result = new HashMap<String, Object>();
+        result.put("code", 500);
+        result.put("message", "save fail");
         try {
             String nameCity = data.get("name").toString();
             Weather weather = weatherService.getAndSaveWeatherByCityName(nameCity);
-            return weather;
+            if(weather != null) {
+                result.put("code", 201);
+                result.put("message", "save success");
+                result.put("data", weather);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        return null;
+        return result;
     }
 
 }
