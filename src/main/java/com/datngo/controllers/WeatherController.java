@@ -38,7 +38,7 @@ public class WeatherController {
     @PostMapping
     public Map<String, Object> saveWeatherByCityName(@RequestBody Map<String, Object> data){
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("code", 500);
+        result.put("code", 400);
         result.put("message", "save fail");
         try {
             String nameCity = data.get("name").toString();
