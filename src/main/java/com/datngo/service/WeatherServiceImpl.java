@@ -55,13 +55,11 @@ public class WeatherServiceImpl {
                 Weather weatherNew = weatherRepository.save(weather);
                 log.debug("response -----> {}", jsonObject);
                 return weatherNew;
-            } else {
-                return null;
             }
         } catch (Exception e) {
             log.debug(e.getMessage());
-            return null;
         }
+        return null;
     }
 
     public Weather updateWeatherByCityName(Weather weather) {
