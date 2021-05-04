@@ -59,6 +59,33 @@ public class WeatherServiceImpl {
         }
     }
 
+    public Weather updateWeatherByCityName(Weather weather) {
+        String url = "http://api.openweathermap.org/data/2.5/weather?q=" + weather.getCity() + "&appid=" + API_KEY + "&units=metric";
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(url).build();
+        log.debug("URL -----> {}", url);
+        try {
+            Response response = client.newCall(request).execute();
+            String body = response.body().string();
+            JSONObject jsonObject = new JSONObject(body);
+
+            weather.setMinTemp(jsonObject.getJSONObject("main").getFloat("temp_min"));
+            weather.setMaxTemp(jsonObject.getJSONObject("main").getFloat("temp_max"));
+            JSONArray jsonWeatherArray = jsonObject.getJSONArray("weather");
+            weather.setIcon(((JSONObject)jsonWeatherArray.get(0)).optString("icon"));
+            weather.setMain(((JSONObject)jsonWeatherArray.get(0)).optString("main"));
+            weather.setDate(convertUTCTimeToLocalTime(jsonObject.getInt("dt")));
+            weather.setUpdateOn(LocalDateTime.now());
+
+            Weather weatherUpdate = weatherRepository.save(weather);
+            log.debug("response -----> {}", jsonObject);
+            return weatherUpdate;
+        } catch (Exception e) {
+            log.debug(e.getMessage());
+            return null;
+        }
+    }
+
     public static LocalDateTime convertUTCTimeToLocalTime(int UTCTime) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         java.util.Date currenTimeZone=new java.util.Date((long)UTCTime*1000);
