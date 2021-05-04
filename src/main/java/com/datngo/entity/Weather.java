@@ -17,6 +17,7 @@ public class Weather {
     Float minTemp;
     Float maxTemp;
     String main;
+    String icon;
 
     @Column(name = "created_on", length = 50)
     LocalDateTime createOn;
